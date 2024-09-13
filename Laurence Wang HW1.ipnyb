@@ -1,0 +1,73 @@
+import pandas as pd
+url = "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-05-05/villagers.csv"
+df = pd.read_csv(url)
+df.isna().sum()
+shape = df.shape
+print("number of roles :", shape[0] )
+print("number of columns :",shape[1])
+
+#2.
+#variables are the categories that being measured and recorded in the data, such as 'species' and 'gender'.
+#observations are entities that recoreded in variables.
+
+numerical_stats = df.describe()
+song_counts = df['song'].value_counts()
+
+print(numerical_stats)
+print(song_counts)
+
+#5.
+#attributes directly describe some properties of the object, so they do not need ().
+#methods need to do calculations or other operations to perform the object, and they need ().
+
+#summary: https://notebooklm.google.com/notebook/7bacb7dd-cd8a-4f64-8bff-50d2488aecf5?original_referer=https:%2F%2Fnotebooklm.google%23&pli=1
+#Here is a summary of your conversation, drawing on the information you provided and the sources:
+#*   You began by expressing interest in understanding the structure and content of a dataset about Animal Crossing characters, specifically wanting to know what columns (variables) were present and the overall size of the dataset.
+#*   You were provided with explanations of key terms like **columns**, **rows**, **observations**, and **variables** within the context of datasets.
+#*   The conversation highlighted the importance of distinguishing between **numerical** and **categorical** data and the different ways to summarize each type.
+#*   You received guidance on using the *pandas* library in Python to load your dataset, view its columns, determine its dimensions, and generate basic summaries.
+#*   You then explored various summarization techniques, including `.describe()` for numerical data, `.value_counts()` for categorical data, and the concept of grouping and aggregation.
+#*   The issue of **missing data** was discussed, noting that `.describe()` handles it automatically while `.value_counts()` requires an additional argument (`dropna=False`) to include them.
+#*   You encountered a coding issue where your code didn't print the calculated summaries. The solution of explicitly using the `print()` function in Python was provided.
+#*   Finally, you sought clarification on the distinction between an **attribute** (data tied to an object) and a **method** (an action performed on an object), using examples from the *pandas* DataFrame context.
+
+#The conversation demonstrated a clear progression from basic dataset exploration to more involved summarization techniques and troubleshooting coding issues, reflecting the learning objectives outlined in the STA130 course materials. The sources provided a solid foundation for understanding the concepts and tools necessary to work with datasets effectively. 
+
+#6. 
+# count is the sum of numbers.
+# mean is the mean value of these numbers.
+# std is the standard deviation of these numbers
+# min is the lowest value in these numbers.max is the largerst value in these numbers.
+# 50% is the middle value of the numbers. 25% is the middle value for the numbers lower than 50%. 75% is the middle value for the numbers larger than 50%
+
+#7.1
+import pandas as pd
+url = "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-05-05/villagers.csv"
+df = pd.read_csv(url)
+df.dropna(how='all', inplace=True)
+
+#7.2
+import pandas as pd
+url = "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-05-05/villagers.csv"
+df = pd.read_csv(url)
+del df['name']
+
+#7.3 As del df[] deletes the entire column, it will reduece the rows that df.dropna may delete so exact data will be deleted or remained.
+
+#7.4
+import pandas as pd
+url = "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-05-05/villagers.csv"
+df = pd.read_csv(url)
+df.dropna(thresh=1, inplace=True)
+
+#8.1
+import pandas as pd
+url = 'https://raw.githubusercontent.com/mwaskom/seaborn-data/master/titanic.csv'
+df = pd.read.csv(url)
+titanic_df.groupby("pclass")["age"].describe()
+# it show the statistic of age for each category that represent by a value in the column of class of passengers
+
+#8.2
+#df.describe is used to show statistic results for the whole dataset, and df.groupby only cares about the selected columns.
+
+#https://notebooklm.google.com/notebook/7bacb7dd-cd8a-4f64-8bff-50d2488aecf5?original_referer=https:%2F%2Fnotebooklm.google%23&pli=1
