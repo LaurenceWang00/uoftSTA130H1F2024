@@ -1,0 +1,291 @@
+#question1
+
+import pandas as pd 
+pingees = pd.read_csv("https://raw.githubusercontent.com/mwaskom/seaborn-data/master/penguins.csv")
+pingees
+#https://stackoverflow.com/questions/52771328/plotly-chart-not-showing-in-jupyter-notebook
+import plotly.offline as pyo
+# Set notebook mode to work in offline
+pyo.init_notebook_mode()
+import plotly.express as px
+fig = px.histogram(pingees, color="species", x="flipper_length_mm")
+species_list = pingees['species'].unique()
+def add_stats_for_species(species):
+    species_data = pingees[pingees['species'] == species]['flipper_length_mm']
+    
+    mean = species_data.mean()
+    median = species_data.median()
+    min_val = species_data.min()
+    max_val = species_data.max()
+    q1 = species_data.quantile(0.25)
+    q3 = species_data.quantile(0.75)
+    std_dev = species_data.std()
+    lower_bound = mean - 2 * std_dev
+    upper_bound = mean + 2 * std_dev
+    
+    fig.add_vline(mean, line_color='red', line_width=2, 
+                  annotation_text='Mean', annotation_position='top')
+    fig.add_vline(median, line_color='blue', line_width=2, 
+                  annotation_text='Median', annotation_position='top')
+
+    fig.add_shape(type="rect",
+                  x0=q1, y0=0, x1=q3,y1=20,
+                   fillcolor="white", opacity=0.5,
+                  line_width=0,
+                  name='IQR')
+
+    fig.add_shape(type="rect",
+                  x0=lower_bound, y0=0, x1=upper_bound, y1=20,
+                  fillcolor="white", opacity=0.5,
+                  line_width=0,
+                  name='±2 Std Dev')
+for species in species_list:
+    add_stats_for_species(species)
+
+    
+fig.show(rendered='png') 
+
+
+
+
+#question 2
+
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Load the penguins dataset
+penguins_df = pd.read_csv("https://raw.githubusercontent.com/mwaskom/seaborn-data/master/penguins.csv")
+
+# Create subplots for each species
+fig, ax = plt.subplots(1, 3, figsize=(15, 5))  # 1 row, 3 columns
+
+for i, species in enumerate(penguins_df['species'].unique()):
+    sns.kdeplot(data=penguins_df[penguins_df['species'] == species], x='flipper_length_mm', label=species, ax=ax[i])
+    
+    species_data = penguins_df[penguins_df['species'] == species]['flipper_length_mm']
+    mean = species_data.mean()
+    median = species_data.median()
+    min_val = species_data.min()
+    max_val = species_data.max()
+    q1 = species_data.quantile(0.25)
+    q3 = species_data.quantile(0.75)
+    std_dev = species_data.std()
+    lower_bound = mean - 2 * std_dev
+    upper_bound = mean + 2 * std_dev
+    
+    ax[i].legend()
+    ax[i].set_xlabel('Flipper Length (mm)')
+    ax[i].set_ylabel('Density')
+    ax[i].set_title(f'KDE Plot for {species}')
+    
+    # Add mean and median lines
+    ax[i].axvline(x = mean, color='#d62728')
+    ax[i].axvline(x = median, color='#1f77b4')
+
+    # Add rectangles for IQR
+    ax[i].axvspan(q1, q3, facecolor='#1f77b4')
+
+    # Add rectangles for 2 std dev range
+    ax[i].axvspan(lower_bound, upper_bound, facecolor='#2ca02c')
+    
+    
+plt.tight_layout()  # Adjust spacing between subplots
+plt.show()
+
+
+
+
+#question 3
+I: 
+the box plot can shows information of data directly; histogram can show visualized graph of distribution; kernel density estimator provides #smooth data and probability estimation.
+
+ChatBot:
+Data Visualization Methods and their Uses
+The sources you provided give a good explanation of the use cases for each of these data visualization techniques:●
+Box plots are a great way to visually summarize the distribution of a dataset and directly show information such as the median, quartiles, and potential outliers. They are particularly useful for comparing the distributions of different groups of data. The sources mention the importance of being aware of outliers in a dataset. The sources note that box plots are unable to visualize multi-modal distributions, meaning multiple peaks in a dataset.●
+Histograms are used to visualize the distribution of data by grouping numbers into ranges and showing the frequency of those ranges. The sources discuss the importance of choosing the appropriate bin size for a histogram, as it can affect how we interpret the data. The sources emphasize that histograms provide a visual representation of the data's sample size as well as its modality. The sources also discuss the ability to use horizontal and vertical lines to highlight specific features on the histogram.●
+Kernel density estimation (KDE) plots are used to create a smooth, continuous representation of the data's distribution. They are a non-parametric estimation of the probability density function (PDF) of a continuous random variable. The sources also mention that KDE plots provide a way to visualize multi-modal distributions, unlike box plots. KDE plots are particularly useful for examining the distribution of data when you want a smooth curve, rather than a binned representation like a histogram. The sources also note that KDE plots are dependent on the choice of a bandwidth parameter, similar to the number of bins in a histogram.
+The sources suggest that a ChatBot can be helpful for finding the right code to generate these plots and can explain how those codes work.
+These methods are helpful for understanding the overall distribution of data and exploring its properties. However, the sources emphasize that these are just tools for visualization, and further analysis is often required to understand the underlying patterns and relationships in the data.
+
+I:
+can you provide some pros and cons of these three techniques?
+
+Chatbot:
+Pros and Cons of Box Plots, Histograms, and Kernel Density Estimators
+Here are some pros and cons of box plots, histograms, and kernel density estimators based on the sources provided and our conversation:
+Box Plots●
+Pros:○
+Show data directly: Box plots directly visualize key statistics of a dataset, including the median, quartiles (25th and 75th percentiles), and potential outliers [our conversation]. They effectively summarize the distribution of data, making it easy to see these specific values.○
+Useful for comparisons: They are particularly useful for comparing the distributions of different groups of data, allowing for quick assessments of central tendency and spread across groups [our conversation, 103].●
+Cons:○
+Limited modality representation: Box plots cannot effectively represent multi-modal distributions, meaning datasets with multiple peaks. If a dataset has multiple peaks, this information will be lost in a box plot [our conversation, 103].
+Histograms●
+Pros:○
+Visualize distribution and sample size: Histograms offer a visual representation of both the data's distribution and sample size. The height of the bars provides information about the frequency of data points within each bin, making it easy to understand how the data is distributed.○
+Highlight specific features: You can easily add horizontal and vertical lines to histograms to highlight specific features, such as means, medians, or standard deviations. This customization can aid in understanding the data's characteristics and comparing it to other distributions.●
+Cons:○
+Bin size sensitivity: The choice of bin size in a histogram can impact the interpretation of the data. Different bin sizes can emphasize or obscure certain patterns, making it important to carefully consider the appropriate bin size for the data and research question.
+Kernel Density Estimation (KDE) Plots●
+Pros:○
+Smooth, continuous representation: KDE plots create a smooth, continuous representation of the data distribution. This can be helpful for understanding the overall shape of the distribution and identifying potential multimodality.○
+Visualize multi-modal distributions: Unlike box plots, KDE plots can effectively visualize multi-modal distributions, showing multiple peaks if they exist [our conversation].●
+Cons:○
+Bandwidth parameter: KDE plots rely on a bandwidth parameter, similar to the bin size in histograms. The choice of bandwidth can impact the smoothness of the curve and the interpretation of the results, making it crucial to select an appropriate bandwidth for the data.
+It's important to select the most appropriate visualization method based on the specific characteristics of the data and the goals of the analysis. The sources emphasize that ChatBots can be helpful for generating code for these plots and explaining their underlying functionalities.
+
+
+I prefer the box plot, as it could shows the value of mean, median, IQR, max and min directly while also represent a visualize pattern of the data.
+
+
+
+
+#question 4
+    1.A
+    2.B
+    3.D
+    4.C
+
+Summary of Interactions on Data Visualization Techniques
+Our conversation began with you encountering an IndentationError in your Python code. You did not provide the code, but errors of this nature usually mean that the lines of code are not indented properly. Python uses indentation to determine how the code should be executed, so maintaining consistent indentation is crucial for your code to run without errors. [our conversation]
+We then moved on to a broader discussion about data visualization techniques, specifically box plots, histograms, and kernel density estimation (KDE) plots. You accurately described the primary functions of these techniques: [our conversation]●
+Box plots: Effectively summarize and directly visualize key distributional features of a dataset.●
+Histograms: Show the distribution of numerical data by grouping values into bins, allowing us to see the frequency or count of data points within each bin.●
+KDE plots: Create a smooth, continuous representation of the probability density function of a dataset.
+Building on this, we further discussed the pros and cons of each technique: [our conversation]●
+Box plots: Useful for quickly comparing distributions, particularly across groups. However, they are not suitable for visualizing multi-modal distributions (i.e., distributions with multiple peaks).●
+Histograms: Provide a clear representation of both data distribution and sample size. However, the choice of bin size can significantly influence how we interpret the data.●
+KDE Plots: Excel in representing data smoothly and are capable of revealing multi-modal distributions that might be missed with box plots. However, the selection of an appropriate bandwidth parameter is crucial, as it can significantly impact the smoothness of the resulting curve and, consequently, our interpretation of the data.
+You also noted that box plots can show potential outliers [our conversation], which are data points that differ significantly from other observations in the dataset. The sources explain that it's important to be aware of potential outliers because they can significantly impact the results of statistical analyses. The sources also note that box plots cannot visualize multi-modal distributions.
+You correctly stated that histograms can be customized to highlight specific features of the data [our conversation], and the sources show how to do this using horizontal and vertical lines.
+The sources provide additional information about these visualization techniques, including code examples and explanations for creating them using libraries like Seaborn and Plotly. They also provide code examples for creating histograms with vertical lines and shaded areas using Plotly's fig.add_hline() and fig.add_hrect() functions.
+Beyond the specific techniques we discussed, the sources cover a range of related data visualization concepts:●
+Customizing plots: The sources emphasize the flexibility of libraries like Seaborn and Plotly, demonstrating how to adjust themes, colors, and other arguments for refining visualizations. They particularly recommend Plotly for its modern features like interactive data exploration and animation.●
+Summarizing data: The sources explain the differences between sample means, medians, and standard deviations, and how these relate to concepts like skewness (a measure of the asymmetry of a probability distribution). They also differentiate between parameters (measures that describe a population) and statistics (measures that describe a sample). The sources note that sample means and standard deviations can be influenced by outliers.
+The sources highlight the importance of active learning and resource utilization in data science, urging you to review course materials, interact with ChatBots for clarification, and seek help from TAs or online communities when necessary. This emphasis underscores that data science is a dynamic and evolving field.
+
+###I have done the coding with ChatBot before asking about the error from my Python code, but it does not shows up in the summary and I don't know why...
+
+
+#question 5
+mean represent the average value of the dataset, and the median represent the middle value of the dataset.
+when the mean value is larger than the median value, indicating that there are very high values with few counts, and lots of low values, so the tail of the graph goes to the right, resulted in a right skew.
+when the mean value is lower than the median value, indicating that tshere are lots of high values and few very low values, so the tail of the graph goes to the left, resulted in a left skew.
+
+
+This summary reviews our conversation about the relationship between the mean and median, and how it relates to data skewness.●
+You asked about the relationship between the mean and median.●
+You then asked about the relationship between right and left skewness.●
+Finally, you provided a code snippet and asked for an explanation of the code and how it works.
+Understanding Mean, Median, and Skewness
+The mean and median are measures of central tendency in a dataset. The mean, commonly known as the average, is calculated by summing all values and dividing by the number of values. The median represents the middle value in a sorted dataset, with half the data points above and half below.
+In symmetrical distributions, the mean and median are equal. However, in skewed distributions, the mean is pulled in the direction of the skew. Right skew (positive skew) happens when the tail of the distribution extends further to the right, resulting in a mean greater than the median. Left skew (negative skew) occurs when the distribution's tail extends further to the left, causing the mean to be less than the median.
+Code Explanation
+The code you provided uses Python libraries to generate and analyze random samples from a gamma distribution. Here's a breakdown:1.
+Importing Libraries:○
+from scipy import stats: Imports the stats module from SciPy for statistical functions and probability distributions.○
+import pandas as pd: Imports the Pandas library for data manipulation and analysis.○
+import numpy as np: Imports the NumPy library for numerical computing.2.
+Generating Samples:○
+sample1 = stats.gamma(a=2, scale=2).rvs(size=1000): Creates a random sample named 'sample1' containing 1000 values drawn from a gamma distribution with a shape parameter (a) of 2 and a scale parameter of 2.○
+sample2 = -stats.gamma(a=2, scale=2).rvs(size=1000): Generates a second random sample, 'sample2', which appears to be a mirrored version of 'sample1' by multiplying the values from the same gamma distribution by -1.3.
+Visualizing Data:○
+fig1 = px.histogram(pd.DataFrame({'data': sample1}), x="data"): This line seems to create a histogram to visualize the 'sample1' data. While not explicitly imported in the code, px likely refers to the plotly.express library.4.
+Calculating Mean and Median:○
+sample1.mean(): Calculates the mean of 'sample1'.○
+np.quantile(sample1, [0.5]) # median: Calculates the median (50th percentile) of 'sample1'.
+Connecting Code to Skewness
+By calculating both the mean and median of the generated gamma distribution sample ('sample1'), the code aims to analyze the skewness of the data. Comparing the mean and median values can indicate whether the distribution is right-skewed, left-skewed, or symmetrical. A larger mean than the median would suggest a right-skewed distribution.
+The code snippet also provides a comment: "# USE 'fig1.show(renderer="png")' FOR ALL GitHub and MarkUs SUBMISSIONS." This is a reminder to ensure proper rendering of the plot on those platforms.
+Important Note: I've made some assumptions in interpreting the code, as it's missing explicit imports and context. For instance, it's unclear without further context if px refers to a function from Plotly or another library. It's always best to review code within its complete context to ensure accuracy.
+
+
+
+
+#quesiton 6
+import pandas as pd
+import numpy as np
+import plotly.offline as pyo
+import plotly.express as px
+df = pd.read_csv("https://raw.githubusercontent.com/manuelamc14/fast-food-Nutritional-Database/main/Tables/nutrition.csv")
+fig = px.histogram(df, color="restaurant id", x="calories",category_orders={"calories": sorted(df["calories"].unique())})
+fig.show(renderer="png") 
+
+fig = px.histogram(df, color="restaurant id", x="total fat (g)",category_orders={'total fat (g)': sorted(df['total fat (g)'].unique())})
+fig.show(renderer="png") 
+
+fig = px.histogram(df, color="restaurant id", x="carbohydrates (g)",category_orders={'carbohydrates (g)': sorted(df['carbohydrates (g)'].unique())})
+fig.show(renderer="png") 
+
+fig = fig = px.histogram(df, color="restaurant id", x="dietary fiber (g)",category_orders={"dietary fiber (g)": sorted(df["dietary fiber (g)"].unique())})
+fig.show(renderer="png") 
+
+fig = px.histogram(df, color="restaurant id", x="protein (g)",category_orders={"protein (g)": sorted(df["protein (g)"].unique())})
+fig.show(renderer="png") 
+
+import pandas as pd 
+df = pd.read_csv("https://raw.githubusercontent.com/manuelamc14/fast-food-Nutritional-Database/main/Tables/nutrition.csv")
+df
+import plotly.offline as pyo
+# Set notebook mode to work in offline
+pyo.init_notebook_mode()
+import plotly.express as px
+fig = px.histogram(df, color="restaurant id", x="calories",category_orders={"calories": sorted(df["calories"].unique())})
+restaurant_list = df['restaurant id'].unique()
+def add_stats(restaurant):
+    restaurant_data = df[df["restaurant id"] == restaurant]["calories"]
+    
+    mean = restaurant_data.mean()
+    median = restaurant_data.median()
+    min_val = restaurant_data.min()
+    max_val = restaurant_data.max()
+    q1 = restaurant_data.quantile(0.25)
+    q3 = restaurant_data.quantile(0.75)
+    std_dev = restaurant_data.std()
+    lower_bound = mean - 2 * std_dev
+    upper_bound = mean + 2 * std_dev
+    
+    fig.add_vline(mean, line_color='red', line_width=2, 
+                  annotation_text='Mean', annotation_position='top')
+   
+
+    fig.add_shape(type="rect",
+                  x0=q1, y0=0, x1=q3,y1=20,
+                   fillcolor="white", opacity=0.5,
+                  line_width=0,
+                  name='IQR')
+
+    fig.add_shape(type="rect",
+                  x0=lower_bound, y0=0, x1=upper_bound, y1=20,
+                  fillcolor="white", opacity=0.5,
+                  line_width=0,
+                  name='±2 Std Dev')
+for restaurant in restaurant_list:
+    add_stats(restaurant)
+
+    
+fig.show(rendered='png') 
+
+
+# from the graph it shows that restaurant '3000' has more kinds of foods compare to the rest of two restaurants. This indicates that '3000' maybe a very large chain restaurant.
+# all medians of calories of three restaurants are smaller than their means, indicates that they are all positively skew.
+# the distribution of counts of protein, calories and fiber on histogram are very similar as they have tails to the right. This indicates that they might sell similar kinds of food, or with similar indegrent.
+
+
+
+
+#Question 7
+import plotly.express as px
+
+df = px.data.gapminder()
+
+fig = px.bar(df, x="continent", y="pop", color="continent",
+  animation_frame="year", animation_group="country", range_y=[0,4000000000])
+fig.show()
+
+
+
+#Question 9
+Yes, I try to interact with chatbot or chatgpt or google it.
